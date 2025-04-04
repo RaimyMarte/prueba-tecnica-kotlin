@@ -3,7 +3,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
-import java.util.regex.Pattern
 
 class LoginViewModel : ViewModel() {
     private val _email = MutableLiveData<String>()
