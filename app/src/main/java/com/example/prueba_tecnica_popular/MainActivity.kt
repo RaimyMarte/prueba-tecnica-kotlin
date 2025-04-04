@@ -1,7 +1,6 @@
 package com.example.prueba_tecnica_popular
 
 import LoginScreen
-import LoginViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,8 +10,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.prueba_tecnica_popular.ui.theme.PruebatecnicapopularTheme
+import androidx.activity.viewModels
+import com.example.prueba_tecnica_popular.ui.auth.viewmodel.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val loginViewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ){
-                    LoginScreen(LoginViewModel())
+                    LoginScreen(loginViewModel)
                 }
             }
         }

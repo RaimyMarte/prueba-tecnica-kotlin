@@ -8,9 +8,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApiClient {
-    @POST ("/login")
+    @POST ("/api/login")
     suspend fun login(@Body request: LoginRequestBody): Response<LoginModel>
 
-    @POST ("/register")
+    @POST ("/api/register")
     suspend fun register(@Body request: LoginRequestBody): Response<RegisterModel>
 }

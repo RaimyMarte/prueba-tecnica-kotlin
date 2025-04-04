@@ -1,3 +1,4 @@
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,12 +21,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prueba_tecnica_popular.R
+import com.example.prueba_tecnica_popular.ui.auth.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,6 +48,8 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
     val password = viewModel.password.observeAsState(initial = "")
     val loginEnabled = viewModel.loginEnabled.observeAsState(initial = true)
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
+    val success = viewModel.success.observeAsState(initial = false)
+    val error = viewModel.error.observeAsState(initial = null)
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -66,31 +71,45 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
             ForgotPassword(Modifier.align(Alignment.End))
 
             Spacer(modifier = Modifier.padding(10.dp))
-            LoginButton(loginEnabled.value) {
-                coroutineScope.launch { viewModel.onLoginSelected() }
+            LoginButton(
+                loginEnabled = loginEnabled.value,
+                onLoginSelected = {
+                    coroutineScope.launch {
+                        viewModel.onLoginSelected()
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.padding(12.dp))
+            SignUpButton(Modifier.align(Alignment.CenterHorizontally))
+
+            error.value?.let {
+                Toast.makeText(LocalContext.current, it, Toast.LENGTH_LONG).show()
             }
 
-//        Spacer(modifier = Modifier.padding(12.dp))
-//        SignUpButton(Modifier.align(Alignment.CenterHorizontally))
+            if (success.value == true) {
+                Toast.makeText(LocalContext.current, "Inicio de sesión exitoso", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 }
 
-//@Composable
-//fun SignUpButton(modifier: Modifier) {
-//    Text(
-//        text = "¿No tienes una cuenta? Regístrate",
-//        modifier = modifier.clickable { },
-//        fontSize = 14.sp,
-//        fontWeight = FontWeight.Bold,
-//        color = Color(0xFF003262)
-//    )
-//}
+@Composable
+fun SignUpButton(modifier: Modifier) {
+    Text(
+        text = "¿No tienes una cuenta? Regístrate",
+        modifier = modifier.clickable { },
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color(0xFF003262)
+    )
+}
 
 @Composable
 fun LoginButton(loginEnabled: Boolean, onLoginSelected: () -> Unit) {
     Button(
-        onClick = { onLoginSelected() },
+        onClick = onLoginSelected,
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
