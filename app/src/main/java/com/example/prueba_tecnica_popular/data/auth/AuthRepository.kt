@@ -26,7 +26,17 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun register(email: String, password: String): ApiResult<RegisterModel> {
-        return api.register(email, password)
+        val response = api.register(email, password)
+
+        if (response is ApiResult.Success) {
+            val token = response.data.token
+
+            if (token.isNotEmpty()) {
+                sessionManager.saveToken(token)
+            }
+        }
+
+        return response
     }
 
     suspend fun logout() {

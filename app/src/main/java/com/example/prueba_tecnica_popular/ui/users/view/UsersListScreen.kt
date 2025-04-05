@@ -47,6 +47,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import com.example.prueba_tecnica_popular.ui.components.LoadingIndicator
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,10 +101,7 @@ fun UsersListScreen(
         ) {
 
             if (isLoading.value) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color(0xFF003262)
-                )
+                LoadingIndicator()
             }
             if (success.value) {
                 UsersList(
