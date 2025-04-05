@@ -105,7 +105,7 @@ fun BaseAuthForm(
             Spacer(modifier = Modifier.padding(16.dp))
 
             EmailField(
-                email = email.value ?: "",
+                email = email.value,
                 onTextFieldChange = { viewModel.onInputChanged(it, password.value)},
                 isError = emailError.value != null,
                 errorMessage = emailError.value ?: ""
@@ -113,8 +113,8 @@ fun BaseAuthForm(
 
             Spacer(modifier = Modifier.padding(4.dp))
             PasswordField(
-                password = password.value ?: "",
-                onTextFieldChange = { viewModel.onInputChanged(email.value ?: "", it) },
+                password = password.value,
+                onTextFieldChange = { viewModel.onInputChanged(email.value, it) },
                 isError = passwordError.value != null,
                 errorMessage = passwordError.value ?: ""
             )
