@@ -1,3 +1,5 @@
+package com.example.prueba_tecnica_popular.ui.auth.view
+
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -55,7 +57,10 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
 
     if (isLoading.value) {
         Box(Modifier.fillMaxSize()) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                Modifier.align(Alignment.Center),
+                color = Color(0xFF003262)
+            )
         }
     } else {
         Column(modifier = modifier) {
@@ -87,7 +92,7 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
                 Toast.makeText(LocalContext.current, it, Toast.LENGTH_LONG).show()
             }
 
-            if (success.value == true) {
+            if (success.value) {
                 Toast.makeText(LocalContext.current, "Inicio de sesión exitoso", Toast.LENGTH_LONG)
                     .show()
             }
@@ -109,7 +114,7 @@ fun SignUpButton(modifier: Modifier) {
 @Composable
 fun LoginButton(loginEnabled: Boolean, onLoginSelected: () -> Unit) {
     Button(
-        onClick = onLoginSelected,
+        onClick = { onLoginSelected() },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -126,7 +131,7 @@ fun LoginButton(loginEnabled: Boolean, onLoginSelected: () -> Unit) {
 @Composable
 fun ForgotPassword(modifier: Modifier) {
     Text(
-        text = "Olvidaste tu contraseña?",
+        text = "¿Olvidaste tu contraseña?",
         modifier = modifier.clickable { },
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
