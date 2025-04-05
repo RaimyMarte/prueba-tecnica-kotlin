@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prueba_tecnica_popular.data.api.ApiResult
-import com.example.prueba_tecnica_popular.domain.auth.GetTokenUseCase
 import com.example.prueba_tecnica_popular.domain.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,7 +14,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val getTokenUseCase: GetTokenUseCase
 ) : ViewModel() {
 
 
@@ -71,16 +69,6 @@ class LoginViewModel @Inject constructor(
                     _error.value = result.message
                 }
             }
-
-            _isLoading.value = false
-        }
-    }
-
-    private fun onGetToken() {
-        viewModelScope.launch {
-            _isLoading.value = true
-
- getTokenUseCase()
 
             _isLoading.value = false
         }

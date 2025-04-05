@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
 import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 
@@ -83,7 +83,7 @@ fun UsersListScreen(
                         viewModel.onLogout()
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Logout,
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
                             contentDescription = "Cerrar sesión",
                             tint = Color.White
                         )
