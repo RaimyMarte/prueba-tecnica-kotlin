@@ -6,13 +6,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.prueba_tecnica_popular.data.api.ApiResult
+import com.example.prueba_tecnica_popular.domain.auth.GetTokenUseCase
 import com.example.prueba_tecnica_popular.domain.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val getTokenUseCase: GetTokenUseCase
+) : ViewModel() {
+
+
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> = _email
 
@@ -31,6 +37,7 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+
     fun onLoginChanged(email: String, password: String) {
         _email.value = email
         _password.value = password
@@ -41,7 +48,8 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     private fun isValidEmail(email: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
-    private fun isValidPassword(password: String): Boolean = password.length >= 8
+    private fun isValidPassword(password: String): Boolean = password.length >= 6
+
 
     fun onLoginSelected() {
         viewModelScope.launch {
@@ -57,11 +65,22 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
                     _success.value = true
                     _error.value = null
                 }
+
                 is ApiResult.Error -> {
                     _success.value = false
                     _error.value = result.message
                 }
             }
+
+            _isLoading.value = false
+        }
+    }
+
+    private fun onGetToken() {
+        viewModelScope.launch {
+            _isLoading.value = true
+
+ getTokenUseCase()
 
             _isLoading.value = false
         }

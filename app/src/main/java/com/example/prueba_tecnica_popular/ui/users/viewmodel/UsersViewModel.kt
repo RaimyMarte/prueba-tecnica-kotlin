@@ -7,13 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.prueba_tecnica_popular.data.api.ApiResult
 import com.example.prueba_tecnica_popular.data.user.model.UserApiResponseModel
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
+import com.example.prueba_tecnica_popular.domain.auth.LogoutUseCase
 import com.example.prueba_tecnica_popular.domain.users.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class UsersViewModel @Inject constructor(private val getUsersUseCase: GetUsersUseCase) :
+class UsersViewModel @Inject constructor(
+    private val getUsersUseCase: GetUsersUseCase,
+    private val logoutUseCase: LogoutUseCase
+) :
     ViewModel() {
     private val _successData = MutableLiveData<UserApiResponseModel>()
     val successData: LiveData<UserApiResponseModel> = _successData
@@ -69,6 +73,15 @@ class UsersViewModel @Inject constructor(private val getUsersUseCase: GetUsersUs
             }
 
             _isLoading.value = false
+        }
+    }
+
+    fun onLogout() {
+        viewModelScope.launch {
+            _currentPage.value = 1
+            users.clear()
+
+            logoutUseCase()
         }
     }
 

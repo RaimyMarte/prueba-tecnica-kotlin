@@ -1,6 +1,7 @@
 package com.example.prueba_tecnica_popular.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,22 +12,31 @@ import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.toRoute
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
+import com.example.prueba_tecnica_popular.ui.session.viewmodel.AppSessionViewModel
 import com.example.prueba_tecnica_popular.ui.users.view.UserDetailsScreen
 import com.google.gson.Gson
 
 
 @Composable
-fun NavigationWrapper() {
+fun NavigationWrapper(appSessionViewModel: AppSessionViewModel = hiltViewModel()) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Login) {
+    val isAuthenticated = appSessionViewModel.isAuthenticated.observeAsState(initial = false)
+    val startDestination = if (isAuthenticated.value) UsersList else Login
+
+    NavHost(navController = navController, startDestination = startDestination) {
+        val navigateToLogin = { navController.navigate(Login) }
+        val navigateToHome = { navController.navigate(UsersList) }
+        val navigateToSignUp = { navController.navigate(SignUp) }
+
         composable<Login> {
             val loginViewModel: LoginViewModel = hiltViewModel()
 
             LoginScreen(
                 loginViewModel,
-                navigateToHome = { navController.navigate(UsersList) },
-                navigateToSignUp = { navController.navigate(UsersList) })
+                navigateToHome = navigateToHome,
+                navigateToSignUp = navigateToSignUp
+            )
         }
 
         composable<UsersList> {
@@ -42,14 +52,23 @@ fun NavigationWrapper() {
                             )
                         )
                     )
-                })
+                },
+                navigateToLogin = navigateToLogin
+            )
         }
 
         composable<UserDetails> { backStackEntry ->
+            val usersViewModel: UsersViewModel = hiltViewModel()
+
             val userDetails = backStackEntry.toRoute<UserDetails>()
             val user = Gson().fromJson(userDetails.user, UserModel::class.java)
 
-            UserDetailsScreen(user,navigateBack = { navController.navigateUp() },)
+            UserDetailsScreen(
+                usersViewModel,
+                user,
+                navigateBack = { navController.navigateUp() },
+                navigateToLogin = navigateToLogin
+            )
         }
     }
 }

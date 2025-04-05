@@ -32,4 +32,8 @@ class AuthRepository @Inject constructor(
     suspend fun logout() {
         sessionManager.clearToken()
     }
+
+    suspend fun getToken(): String? {
+       return sessionManager.getToken()
+    }
 }

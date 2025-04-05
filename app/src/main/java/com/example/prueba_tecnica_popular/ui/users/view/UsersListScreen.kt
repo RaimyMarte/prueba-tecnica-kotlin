@@ -43,12 +43,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
 import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersListScreen(
     viewModel: UsersViewModel,
-    navigateToUserDetails: (UserModel) -> Unit
+    navigateToUserDetails: (UserModel) -> Unit,
+    navigateToLogin: () -> Unit
 ) {
     val successData = viewModel.successData.observeAsState()
     val isLastPage = viewModel.isLastPage.observeAsState(initial = false)
@@ -66,10 +72,21 @@ fun UsersListScreen(
                 ),
                 actions = {
                     IconButton(onClick = { /* Search action */ }) {
-                        Text("🔍", fontSize = 20.sp, color = Color.White)
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Buscar",
+                            tint = Color.White
+                        )
                     }
-                    IconButton(onClick = { /* Menu action */ }) {
-                        Text("⋮", fontSize = 20.sp, color = Color.White)
+                    IconButton(onClick = {
+                        navigateToLogin()
+                        viewModel.onLogout()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Logout,
+                            contentDescription = "Cerrar sesión",
+                            tint = Color.White
+                        )
                     }
                 }
             )
