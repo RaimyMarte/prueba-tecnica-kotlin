@@ -1,52 +1,43 @@
 package com.example.prueba_tecnica_popular.ui.users.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import coil.compose.rememberAsyncImagePainter
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
 import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.prueba_tecnica_popular.ui.components.LoadingIndicator
+import com.example.prueba_tecnica_popular.ui.users.view.components.UsersList
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +52,11 @@ fun UsersListScreen(
     val isLoading = viewModel.isLoading.observeAsState(initial = false)
     val success = viewModel.success.observeAsState(initial = false)
     val error = viewModel.error.observeAsState(initial = null)
+    val searchQuery = viewModel.searchQuery.observeAsState(initial = "")
+    val openSearchInput = viewModel.openSearchInput.observeAsState(initial = false)
+
+    val users = viewModel.getDisplayedUsers()
+    val isSearching = searchQuery.value.isNotEmpty()
 
     Scaffold(
         topBar = {
@@ -71,10 +67,16 @@ fun UsersListScreen(
                     titleContentColor = Color.White
                 ),
                 actions = {
-                    IconButton(onClick = { /* Search action */ }) {
+                    IconButton(onClick = {
+                        if (openSearchInput.value) {
+                            viewModel.onCloseSearchInput()
+                        } else {
+                            viewModel.onOpenSearchInput()
+                        }
+                    }) {
                         Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Buscar",
+                            imageVector = if (openSearchInput.value) Icons.Filled.Clear else Icons.Filled.Search,
+                            contentDescription = if (openSearchInput.value) "Limpair búsqueda" else "Buscar",
                             tint = Color.White
                         )
                     }
@@ -92,193 +94,126 @@ fun UsersListScreen(
             )
         }
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(Color.White)
         ) {
 
-            if (isLoading.value) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color(0xFF003262)
-                )
-            }
-            if (success.value) {
-                UsersList(
-                    users = viewModel.users,
-                    navigateToUserDetails = navigateToUserDetails,
-                    hasMorePages = !isLastPage.value,
-                    onLoadMore = { viewModel.onLoadMoreUsers() },
-                    currentUsers = viewModel.users.size,
-                    totalUsers = successData.value?.total ?: 1
-                )
-            }
-            error.value?.let {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = it,
-                        color = Color.Red
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { viewModel.refreshUsers() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF003262)
-                        )
-                    ) {
-                        Text("Retry")
-                    }
-                }
-
-            }
-
-            FloatingActionButton(
-                onClick = { /* Create new user */ },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                containerColor = Color(0xFF003262)
-            ) {
-                Text("+", fontSize = 24.sp, color = Color.White)
-            }
-        }
-    }
-}
-
-@Composable
-fun UsersList(
-    users: List<UserModel>,
-    navigateToUserDetails: (UserModel) -> Unit,
-    hasMorePages: Boolean,
-    onLoadMore: () -> Unit,
-    currentUsers: Int,
-    totalUsers: Int
-) {
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            (lastVisibleItem >= users.size) && hasMorePages
-        }.collect { shouldLoad ->
-            if (shouldLoad) {
-                onLoadMore()
-            }
-        }
-    }
-
-    Box {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(users.size) { index ->
-                val user = users[index]
-
-                UserListItem(user = user, navigateToUserDetails = navigateToUserDetails)
-                HorizontalDivider(
-                    color = Color.LightGray,
-                    thickness = 0.5.dp,
-                    modifier = Modifier.padding(start = 72.dp)
+            if (openSearchInput.value) {
+                SearchField(
+                    query = searchQuery.value,
+                    onQueryChange = { viewModel.onSearchQueryChanged(it) },
+                    onClearSearch = { viewModel.clearSearch() }
                 )
             }
 
-            item {
-                if (hasMorePages) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    )
-                    {
-                        CircularProgressIndicator(
-                            color = Color(0xFF003262),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                } else if (users.isNotEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No hay mas usuarios",
-                            color = Color.Gray,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-            }
-        }
 
-        if (users.isNotEmpty()) {
+
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .background(Color(0xFF003262).copy(alpha = 0.7f), CircleShape)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .fillMaxSize()
             ) {
-                Text(
-                    text = "Usuarios $currentUsers/$totalUsers",
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
+                if (isLoading.value) {
+                    LoadingIndicator()
+                }
+                if (success.value) {
+                    UsersList(
+                        users = users,
+                        navigateToUserDetails = navigateToUserDetails,
+                        hasMorePages = !isLastPage.value,
+                        onLoadMore = { viewModel.onLoadMoreUsers() },
+                        currentUsers = users.size,
+                        totalUsers = successData.value?.total ?: 1
+                    )
+                }
+
+                if (isSearching && users.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "No se encontraron resultados para \"${searchQuery.value}\"",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+
+                error.value?.let {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { viewModel.refreshUsers() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF003262)
+                            )
+                        ) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun UserListItem(
-    user: UserModel,
-    navigateToUserDetails: (UserModel) -> Unit
+fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    onClearSearch: () -> Unit
 ) {
-    Row(
+    TextField(
+        value = query,
+        onValueChange = { onQueryChange(it) },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigateToUserDetails(user) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        Image(
-            painter = rememberAsyncImagePainter(user.avatar),
-            contentDescription = "Profile picture of ${user.firstName}",
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        placeholder = { Text("Buscar usuario...") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Buscar",
+                tint = Color(0xFF003262)
+            )
+        },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = onClearSearch) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Limpiar búsqueda",
+                        tint = Color(0xFF003262)
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color(0xFF003262),
+            unfocusedTextColor = Color(0xFF003262),
+            cursorColor = Color(0xFF003262),
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
         )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = "${user.firstName} ${user.lastName}",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-
-            Text(
-                text = user.email,
-                fontSize = 14.sp,
-                color = Color.Gray,
-                maxLines = 1
-            )
-        }
-    }
+    )
 }
+
+

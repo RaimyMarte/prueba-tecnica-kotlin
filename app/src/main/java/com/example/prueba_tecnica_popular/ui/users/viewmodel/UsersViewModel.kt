@@ -38,6 +38,14 @@ class UsersViewModel @Inject constructor(
 
     val users = mutableListOf<UserModel>()
 
+    private val _openSearchInput = MutableLiveData<Boolean>()
+    val openSearchInput: LiveData<Boolean> = _openSearchInput
+
+    private val _searchQuery = MutableLiveData<String>("")
+    val searchQuery: LiveData<String> = _searchQuery
+
+    private val _filteredUsers = MutableLiveData<List<UserModel>>(emptyList())
+
     init {
         fetchUsers()
     }
@@ -47,6 +55,7 @@ class UsersViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (refresh) {
+                _searchQuery.value = ""
                 _currentPage.value = 1
                 users.clear()
             }
@@ -62,6 +71,12 @@ class UsersViewModel @Inject constructor(
                     _error.value = null
 
                     users.addAll(newData.data)
+
+                    if (!_searchQuery.value.isNullOrEmpty()) {
+                        filterUsers(_searchQuery.value!!)
+                    } else {
+                        _filteredUsers.value = users.toList()
+                    }
 
                     _isLastPage.value = newData.page >= newData.totalPages
                 }
@@ -92,5 +107,46 @@ class UsersViewModel @Inject constructor(
 
     fun refreshUsers() {
         fetchUsers(refresh = true)
+    }
+
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        filterUsers(query)
+    }
+
+    fun onOpenSearchInput() {
+        _openSearchInput.value = true
+    }
+
+    fun onCloseSearchInput(){
+        _openSearchInput.value = false
+    }
+
+    fun clearSearch() {
+        _searchQuery.value = ""
+        _filteredUsers.value = users.toList()
+    }
+
+    private fun filterUsers(query: String) {
+        if (query.isEmpty()) {
+            _filteredUsers.value = users.toList()
+            return
+        }
+
+        val lowercaseQuery = query.lowercase()
+        _filteredUsers.value = users.filter { user ->
+            user.firstName.lowercase().contains(lowercaseQuery) ||
+                    user.lastName.lowercase().contains(lowercaseQuery) ||
+                    user.email.lowercase().contains(lowercaseQuery)
+        }
+    }
+
+    fun getDisplayedUsers(): List<UserModel> {
+        return if (!_searchQuery.value.isNullOrEmpty()) {
+            _filteredUsers.value ?: emptyList()
+        } else {
+            users
+        }
     }
 }

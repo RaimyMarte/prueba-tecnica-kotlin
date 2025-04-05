@@ -12,6 +12,8 @@ import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.toRoute
 import com.example.prueba_tecnica_popular.data.user.model.UserModel
+import com.example.prueba_tecnica_popular.ui.auth.view.SignUpScreen
+import com.example.prueba_tecnica_popular.ui.auth.viewmodel.SignUpViewModel
 import com.example.prueba_tecnica_popular.ui.session.viewmodel.AppSessionViewModel
 import com.example.prueba_tecnica_popular.ui.users.view.UserDetailsScreen
 import com.google.gson.Gson
@@ -36,6 +38,16 @@ fun NavigationWrapper(appSessionViewModel: AppSessionViewModel = hiltViewModel()
                 loginViewModel,
                 navigateToHome = navigateToHome,
                 navigateToSignUp = navigateToSignUp
+            )
+        }
+
+        composable<SignUp> {
+            val signUpViewModel: SignUpViewModel = hiltViewModel()
+
+            SignUpScreen(
+                signUpViewModel,
+                navigateToHome = navigateToHome,
+                navigateToLogin = navigateToLogin
             )
         }
 
