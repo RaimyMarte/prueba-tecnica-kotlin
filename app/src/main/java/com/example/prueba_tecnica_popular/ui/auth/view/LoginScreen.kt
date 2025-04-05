@@ -3,7 +3,7 @@ package com.example.prueba_tecnica_popular.ui.auth.view
 
 import androidx.compose.runtime.Composable
 import com.example.prueba_tecnica_popular.ui.auth.viewmodel.LoginViewModel
-
+import com.example.prueba_tecnica_popular.R
 
 @Composable
 fun LoginScreen(
@@ -20,7 +20,8 @@ fun LoginScreen(
         onSubmit = { viewModel.onLoginSelected() },
         navigateToHome = navigateToHome,
         navigateToRedirect = navigateToSignUp,
-        showForgotPassword = true
+        showForgotPassword = true,
+        imageId = R.drawable.logo
     )
 }
 

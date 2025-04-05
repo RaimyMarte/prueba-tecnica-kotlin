@@ -37,7 +37,8 @@ fun BaseAuthScreen(
     onSubmit: suspend () -> Unit,
     navigateToHome: () -> Unit,
     navigateToRedirect: () -> Unit,
-    showForgotPassword: Boolean = false
+    showForgotPassword: Boolean = false,
+    imageId: Int
 ) {
     Box(
         (Modifier
@@ -54,7 +55,8 @@ fun BaseAuthScreen(
             onSubmit = onSubmit,
             navigateToHome = navigateToHome,
             navigateToRedirect = navigateToRedirect,
-            showForgotPassword = showForgotPassword
+            showForgotPassword = showForgotPassword,
+            imageId = imageId
         )
     }
 }
@@ -70,7 +72,8 @@ fun BaseAuthForm(
     onSubmit: suspend () -> Unit,
     navigateToHome: () -> Unit,
     navigateToRedirect: () -> Unit,
-    showForgotPassword: Boolean = false
+    showForgotPassword: Boolean = false,
+    imageId: Int
 ) {
     val email = viewModel.email.observeAsState(initial = "")
     val password = viewModel.password.observeAsState(initial = "")
@@ -91,7 +94,7 @@ fun BaseAuthForm(
         }
     } else {
         Column(modifier = modifier) {
-            HeaderImage(Modifier.align(Alignment.CenterHorizontally))
+            HeaderImage(Modifier.align(Alignment.CenterHorizontally), imageId = imageId)
 
             Spacer(modifier = Modifier.padding(8.dp))
             Text(
@@ -106,7 +109,7 @@ fun BaseAuthForm(
 
             EmailField(
                 email = email.value,
-                onTextFieldChange = { viewModel.onInputChanged(it, password.value)},
+                onTextFieldChange = { viewModel.onInputChanged(it, password.value) },
                 isError = emailError.value != null,
                 errorMessage = emailError.value ?: ""
             )

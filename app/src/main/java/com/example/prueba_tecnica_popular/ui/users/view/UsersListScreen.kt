@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,14 +27,11 @@ import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.ui.text.input.KeyboardType
 import com.example.prueba_tecnica_popular.ui.components.LoadingIndicator
+import com.example.prueba_tecnica_popular.ui.users.view.components.SearchField
 import com.example.prueba_tecnica_popular.ui.users.view.components.UsersList
 
 
@@ -173,47 +168,3 @@ fun UsersListScreen(
         }
     }
 }
-
-@Composable
-fun SearchField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onClearSearch: () -> Unit
-) {
-    TextField(
-        value = query,
-        onValueChange = { onQueryChange(it) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        placeholder = { Text("Buscar usuario...") },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Buscar",
-                tint = Color(0xFF003262)
-            )
-        },
-        trailingIcon = {
-            if (query.isNotEmpty()) {
-                IconButton(onClick = onClearSearch) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Limpiar búsqueda",
-                        tint = Color(0xFF003262)
-                    )
-                }
-            }
-        },
-        singleLine = true,
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0xFF003262),
-            unfocusedTextColor = Color(0xFF003262),
-            cursorColor = Color(0xFF003262),
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
-    )
-}
-
-

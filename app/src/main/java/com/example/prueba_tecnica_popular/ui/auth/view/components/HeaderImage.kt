@@ -4,12 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import com.example.prueba_tecnica_popular.R
 
 @Composable
-fun HeaderImage(modifier: Modifier) {
+fun HeaderImage(modifier: Modifier, imageId: Int) {
     Image(
-        painter = painterResource(id = R.drawable.logo),
+        painter = painterResource(id = imageId),
         contentDescription = "logo",
         modifier = modifier
     )
