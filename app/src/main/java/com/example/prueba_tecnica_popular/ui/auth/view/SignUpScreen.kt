@@ -2,6 +2,7 @@ package com.example.prueba_tecnica_popular.ui.auth.view
 
 import androidx.compose.runtime.Composable
 import com.example.prueba_tecnica_popular.ui.auth.viewmodel.SignUpViewModel
+import com.example.prueba_tecnica_popular.R
 
 @Composable
 fun SignUpScreen(
@@ -18,7 +19,8 @@ fun SignUpScreen(
         onSubmit = { viewModel.onSignUpSelected() },
         navigateToHome = navigateToHome,
         navigateToRedirect = navigateToLogin,
-        showForgotPassword = false
+        showForgotPassword = false,
+        imageId = R.drawable.team
     )
 }
 
