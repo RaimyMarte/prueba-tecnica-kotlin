@@ -34,18 +34,22 @@ import com.example.prueba_tecnica_popular.ui.auth.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    navigateToHome: () -> Unit,
+    navigateToSignUp: () -> Unit
+) {
     Box(
         (Modifier
             .fillMaxSize()
             .padding(16.dp))
     ) {
-        Login(Modifier.align(Alignment.Center), viewModel)
+        Login(Modifier.align(Alignment.Center), viewModel, navigateToHome)
     }
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: LoginViewModel) {
+fun Login(modifier: Modifier, viewModel: LoginViewModel, navigateToHome: () -> Unit) {
     val email = viewModel.email.observeAsState(initial = "")
     val password = viewModel.password.observeAsState(initial = "")
     val loginEnabled = viewModel.loginEnabled.observeAsState(initial = true)
@@ -95,6 +99,7 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel) {
             if (success.value) {
                 Toast.makeText(LocalContext.current, "Inicio de sesión exitoso", Toast.LENGTH_LONG)
                     .show()
+                navigateToHome()
             }
         }
     }

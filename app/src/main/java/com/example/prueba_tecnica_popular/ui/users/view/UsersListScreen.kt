@@ -48,7 +48,7 @@ import com.example.prueba_tecnica_popular.ui.users.viewmodel.UsersViewModel
 @Composable
 fun UsersListScreen(
     viewModel: UsersViewModel,
-    onUserClick: (UserModel) -> Unit
+    navigateToUserDetails: (UserModel) -> Unit
 ) {
     val successData = viewModel.successData.observeAsState()
     val isLastPage = viewModel.isLastPage.observeAsState(initial = false)
@@ -91,7 +91,7 @@ fun UsersListScreen(
             if (success.value) {
                 UsersList(
                     users = viewModel.users,
-                    onUserClick = onUserClick,
+                    navigateToUserDetails = navigateToUserDetails,
                     hasMorePages = !isLastPage.value,
                     onLoadMore = { viewModel.onLoadMoreUsers() },
                     currentUsers = viewModel.users.size,
@@ -139,7 +139,7 @@ fun UsersListScreen(
 @Composable
 fun UsersList(
     users: List<UserModel>,
-    onUserClick: (UserModel) -> Unit,
+    navigateToUserDetails: (UserModel) -> Unit,
     hasMorePages: Boolean,
     onLoadMore: () -> Unit,
     currentUsers: Int,
@@ -166,7 +166,7 @@ fun UsersList(
             items(users.size) { index ->
                 val user = users[index]
 
-                UserListItem(user = user, onUserClick = onUserClick)
+                UserListItem(user = user, navigateToUserDetails = navigateToUserDetails)
                 HorizontalDivider(
                     color = Color.LightGray,
                     thickness = 0.5.dp,
@@ -226,12 +226,12 @@ fun UsersList(
 @Composable
 fun UserListItem(
     user: UserModel,
-    onUserClick: (UserModel) -> Unit
+    navigateToUserDetails: (UserModel) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onUserClick(user) }
+            .clickable { navigateToUserDetails(user) }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
