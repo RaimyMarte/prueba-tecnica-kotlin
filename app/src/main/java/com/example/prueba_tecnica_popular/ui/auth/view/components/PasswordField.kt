@@ -1,7 +1,6 @@
 package com.example.prueba_tecnica_popular.ui.auth.view.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -17,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
@@ -35,7 +33,6 @@ fun PasswordField(
         onValueChange = { onTextFieldChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = "Contraseña") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         singleLine = true,
         maxLines = 1,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
