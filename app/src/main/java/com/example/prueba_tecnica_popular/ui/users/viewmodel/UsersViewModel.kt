@@ -25,7 +25,7 @@ class UsersViewModel @Inject constructor(
     private val _isLastPage = MutableLiveData<Boolean>()
     val isLastPage: LiveData<Boolean> = _isLastPage
 
-    private val _currentPage = MutableLiveData<Int>(1)
+    private val _currentPage = MutableLiveData(1)
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -41,7 +41,7 @@ class UsersViewModel @Inject constructor(
     private val _openSearchInput = MutableLiveData<Boolean>()
     val openSearchInput: LiveData<Boolean> = _openSearchInput
 
-    private val _searchQuery = MutableLiveData<String>("")
+    private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> = _searchQuery
 
     private val _filteredUsers = MutableLiveData<List<UserModel>>(emptyList())
@@ -121,6 +121,7 @@ class UsersViewModel @Inject constructor(
 
     fun onCloseSearchInput(){
         _openSearchInput.value = false
+        clearSearch()
     }
 
     fun clearSearch() {
