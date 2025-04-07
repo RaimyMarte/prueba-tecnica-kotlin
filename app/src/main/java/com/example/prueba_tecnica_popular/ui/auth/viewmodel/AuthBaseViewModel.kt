@@ -60,9 +60,7 @@ abstract class AuthBaseViewModel:ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
 
-            val result = action()
-
-            when (result) {
+            when (val result = action()) {
                 is ApiResult.Success -> {
                     _success.value = true
                     _error.value = null

@@ -2,7 +2,6 @@ package com.example.prueba_tecnica_popular.domain.auth
 
 import com.example.prueba_tecnica_popular.data.api.ApiResult
 import com.example.prueba_tecnica_popular.data.auth.AuthRepository
-import com.example.prueba_tecnica_popular.data.auth.model.LoginModel
 import com.example.prueba_tecnica_popular.data.auth.model.RegisterModel
 import javax.inject.Inject
 
